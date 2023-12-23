@@ -2,11 +2,10 @@
 
 namespace CherryAnt\FilamentTwoFactor\Traits;
 
-use Illuminate\Support\Str;
-use Filament\Facades\Filament;
-use Illuminate\Support\Collection;
-use Illuminate\Database\Eloquent\Casts\Attribute;
 use CherryAnt\FilamentTwoFactor\Models\TwoFactorSession;
+use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 
 trait TwoFactorAuthenticatable
 {
@@ -16,20 +15,21 @@ trait TwoFactorAuthenticatable
             $model->twofactorSessions()->get()->each->delete();
         });
     }
+
     public function initializeTwoFactorAuthenticatable()
     {
-        $this->with[] = "twofactorSessions";
+        $this->with[] = 'twofactorSessions';
     }
 
     public function twofactorSessions()
     {
-        return $this->morphMany(TwoFactorSession::class,'authenticatable');
+        return $this->morphMany(TwoFactorSession::class, 'authenticatable');
     }
 
     public function twofactorSession(): Attribute
     {
         return Attribute::make(
-            get: fn() => $this->twofactorSessions->first()
+            get: fn () => $this->twofactorSessions->first()
         );
     }
 
@@ -47,7 +47,8 @@ trait TwoFactorAuthenticatable
     {
         return Attribute::make(
             get: fn () => $this->twofactorSession ? json_decode(decrypt(
-                $this->twofactorSession->two_factor_recovery_codes),true) : null
+                $this->twofactorSession->two_factor_recovery_codes
+            ), true) : null
         );
     }
 
@@ -64,7 +65,7 @@ trait TwoFactorAuthenticatable
             'two_factor_secret' => encrypt(filament('filament-two-factor')->getEngine()->generateSecretKey()),
             'two_factor_recovery_codes' => $this->generateRecoveryCodes(),
         ];
-        if ($this->twofactor_session){
+        if ($this->twofactor_session) {
             $this->disableTwoFactorAuthentication(); // Delete the session if it exists.
         }
         $this->twofactorSession = $this->twofactorSessions()->create($twoFactorData);
@@ -82,7 +83,7 @@ trait TwoFactorAuthenticatable
         $this->setTwoFactorSession();
     }
 
-    public function setTwoFactorSession(?int $lifetime=null)
+    public function setTwoFactorSession(?int $lifetime = null)
     {
         $this->twofactorSession->setSession($lifetime);
     }
@@ -95,7 +96,7 @@ trait TwoFactorAuthenticatable
     public function generateRecoveryCodes()
     {
         return encrypt(json_encode(Collection::times(8, function () {
-            return Str::random(10) . '-' . Str::random(10);;
+            return Str::random(10) . '-' . Str::random(10);
         })->all()));
     }
 
@@ -114,5 +115,4 @@ trait TwoFactorAuthenticatable
             'two_factor_recovery_codes' => $this->generateRecoveryCodes(),
         ])->save();
     }
-
 }

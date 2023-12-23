@@ -25,15 +25,15 @@ class Install extends Command
      */
     public function handle()
     {
-        $this->line("***************************");
-        $this->line("*     FILAMENT TWOFACTOR   *");
-        $this->line("***************************");
+        $this->line('***************************');
+        $this->line('*     FILAMENT TWOFACTOR   *');
+        $this->line('***************************');
         $this->newLine(2);
         $this->callSilent('vendor:publish', [
-            "--tag" => "filament-two-factor-migrations"
+            '--tag' => 'filament-two-factor-migrations',
         ]);
-        $this->call("migrate");
-        $this->info("You may now enable 2FA by appending ->enableTwoFactorAuthentication() to TwoFactorPlugin::make(). See the docs for more info.");
+        $this->call('migrate');
+        $this->info('You may now enable 2FA by appending ->enableTwoFactorAuthentication() to TwoFactorPlugin::make(). See the docs for more info.');
         $this->newLine();
 
         return static::SUCCESS;

@@ -2,38 +2,39 @@
 
 namespace CherryAnt\FilamentTwoFactor;
 
-use Closure;
-use Filament\Forms;
-use Filament\Panel;
-use Livewire\Livewire;
-use BaconQrCode\Writer;
-use Illuminate\Support\Arr;
-use Filament\Contracts\Plugin;
-use Filament\Facades\Filament;
-use Illuminate\Cache\Repository;
-use Filament\Navigation\MenuItem;
-use PragmaRX\Google2FA\Google2FA;
 use BaconQrCode\Renderer\Color\Rgb;
-use BaconQrCode\Renderer\ImageRenderer;
-use Illuminate\Validation\Rules\Password;
-use BaconQrCode\Renderer\RendererStyle\Fill;
 use BaconQrCode\Renderer\Image\SvgImageBackEnd;
-use Filament\Support\Concerns\EvaluatesClosures;
+use BaconQrCode\Renderer\ImageRenderer;
+use BaconQrCode\Renderer\RendererStyle\Fill;
 use BaconQrCode\Renderer\RendererStyle\RendererStyle;
-use Illuminate\Contracts\Auth\Authenticatable;
+use BaconQrCode\Writer;
 use CherryAnt\FilamentTwoFactor\Middleware\MustTwoFactor;
 use CherryAnt\FilamentTwoFactor\Pages\TwoFactorPage;
+use Closure;
+use Filament\Contracts\Plugin;
+use Filament\Facades\Filament;
+use Filament\Panel;
+use Filament\Support\Concerns\EvaluatesClosures;
+use Illuminate\Cache\Repository;
+use Illuminate\Contracts\Auth\Authenticatable;
+use Livewire\Livewire;
+use PragmaRX\Google2FA\Google2FA;
 
 class TwoFactorCore implements Plugin
 {
     use EvaluatesClosures;
+
     protected $engine;
+
     protected $cache;
+
     protected $twoFactorAuthentication;
+
     protected $forceTwoFactorAuthentication;
+
     protected $twoFactorRouteAction;
 
-    public function __construct(Google2FA $engine, Repository $cache = null)
+    public function __construct(Google2FA $engine, ?Repository $cache = null)
     {
         $this->engine = $engine;
         $this->cache = $cache;
@@ -51,6 +52,7 @@ class TwoFactorCore implements Plugin
     {
         return app(static::class);
     }
+
     public function register(Panel $panel): void
     {
         $panel
@@ -58,9 +60,11 @@ class TwoFactorCore implements Plugin
             ->authMiddleware([MustTwoFactor::class]);
         Livewire::component('two-factor-page', Pages\TwoFactorPage::class);
     }
+
     protected function preparePages(): array
     {
         $collection = collect();
+
         return $collection->toArray();
     }
 
@@ -133,11 +137,12 @@ class TwoFactorCore implements Plugin
 
             return true;
         }
+
         return false;
     }
 
     public function shouldForceTwoFactor(): bool
     {
-        return $this->forceTwoFactorAuthentication;// && !$this->auth()->user()?->hasConfirmedTwoFactor();
+        return $this->forceTwoFactorAuthentication; // && !$this->auth()->user()?->hasConfirmedTwoFactor();
     }
 }
