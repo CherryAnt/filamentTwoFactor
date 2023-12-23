@@ -2,6 +2,7 @@
 
 namespace CherryAnt\FilamentTwoFactor;
 
+use CherryAnt\FilamentTwoFactor\Commands\Install;
 use Filament\Support\Assets\AlpineComponent;
 use Filament\Support\Facades\FilamentAsset;
 use Livewire\Livewire;
