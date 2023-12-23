@@ -2,23 +2,22 @@
 
 namespace CherryAnt\FilamentTwoFactor\Livewire;
 
-use Filament\Forms;
-use Filament\Forms\Form;
-use Filament\Actions\Action;
-use Filament\Actions\Concerns\InteractsWithActions;
-use Filament\Facades\Filament;
-use Illuminate\Support\Collection;
-use Filament\Notifications\Notification;
-use Filament\Actions\Contracts\HasActions;
 use CherryAnt\FilamentTwoFactor\Actions\PasswordButtonAction;
+use Filament\Actions\Action;
+use Filament\Facades\Filament;
+use Filament\Forms;
+use Filament\Notifications\Notification;
+use Illuminate\Support\Collection;
 
 class TwoFactorAuthentication extends MyProfileComponent
 {
-    protected string $view = "filament-two-factor::livewire.two-factor-authentication";
+    protected string $view = 'filament-two-factor::livewire.two-factor-authentication';
 
     // public ?array $data = [];
     public $user;
+
     public $code;
+
     public bool $showRecoveryCodes = false;
 
     public static $sort = 30;
@@ -32,7 +31,7 @@ class TwoFactorAuthentication extends MyProfileComponent
     {
         return PasswordButtonAction::make('enable')
             ->label(__('filament-two-factor::default.profile.2fa.actions.enable'))
-            ->action(function(){
+            ->action(function () {
                 // sleep(1);
                 $this->user->enableTwoFactorAuthentication();
                 Notification::make()
@@ -48,7 +47,7 @@ class TwoFactorAuthentication extends MyProfileComponent
             ->label(__('filament-two-factor::default.profile.2fa.actions.disable'))
             ->color('primary')
             ->requiresConfirmation()
-            ->action(function(){
+            ->action(function () {
                 $this->user->disableTwoFactorAuthentication();
                 Notification::make()
                     ->warning()
@@ -67,10 +66,10 @@ class TwoFactorAuthentication extends MyProfileComponent
                 Forms\Components\TextInput::make('code')
                     ->label(__('filament-two-factor::default.fields.2fa_code'))
                     ->placeholder('###-###')
-                    ->required()
+                    ->required(),
             ])
-            ->action(function($data,$action,$livewire){
-                if (!filament('filament-two-factor')->verify(code:$data['code'])){
+            ->action(function ($data, $action, $livewire) {
+                if (! filament('filament-two-factor')->verify(code: $data['code'])) {
                     $livewire->addError('mountedActionsData.0.code', __('filament-two-factor::default.profile.2fa.confirmation.invalid_code'));
                     $action->halt();
                 }
@@ -88,7 +87,7 @@ class TwoFactorAuthentication extends MyProfileComponent
         return PasswordButtonAction::make('regenerateCodes')
             ->label(__('filament-two-factor::default.profile.2fa.actions.regenerate_codes'))
             ->requiresConfirmation()
-            ->action(function(){
+            ->action(function () {
                 // These needs to regenerate the codes, then show the section.
                 $this->user->reGenerateRecoveryCodes();
                 $this->showRecoveryCodes = true;
@@ -105,7 +104,6 @@ class TwoFactorAuthentication extends MyProfileComponent
         return collect($this->user->two_factor_recovery_codes ?? []);
     }
 
-
     public function getTwoFactorQrCode()
     {
         return filament('filament-two-factor')->getTwoFactorQrCodeSvg($this->user->getTwoFactorQrCodeUrl());
@@ -113,12 +111,11 @@ class TwoFactorAuthentication extends MyProfileComponent
 
     public function toggleRecoveryCodes()
     {
-        $this->showRecoveryCodes = !$this->showRecoveryCodes;
+        $this->showRecoveryCodes = ! $this->showRecoveryCodes;
     }
 
     public function showRequiresTwoFactorAlert()
     {
         return filament('filament-two-factor')->shouldForceTwoFactor();
     }
-
 }
