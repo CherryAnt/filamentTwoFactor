@@ -8,32 +8,37 @@ use BaconQrCode\Renderer\ImageRenderer;
 use BaconQrCode\Renderer\RendererStyle\Fill;
 use BaconQrCode\Renderer\RendererStyle\RendererStyle;
 use BaconQrCode\Writer;
+use CherryAnt\FilamentTwoFactor\Livewire\PersonalInfo;
 use CherryAnt\FilamentTwoFactor\Livewire\TwoFactorAuthentication;
+use CherryAnt\FilamentTwoFactor\Livewire\UpdatePassword;
 use CherryAnt\FilamentTwoFactor\Middleware\MustTwoFactor;
 use CherryAnt\FilamentTwoFactor\Pages\TwoFactorPage;
 use Closure;
 use Filament\Contracts\Plugin;
 use Filament\Facades\Filament;
+use Filament\Navigation\MenuItem;
 use Filament\Panel;
 use Filament\Support\Concerns\EvaluatesClosures;
 use Illuminate\Cache\Repository;
 use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Validation\Rules\Password;
 use Livewire\Livewire;
 use PragmaRX\Google2FA\Google2FA;
-use CherryAnt\FilamentTwoFactor\Livewire\UpdatePassword;
-use Illuminate\Validation\Rules\Password;
-use CherryAnt\FilamentTwoFactor\Livewire\PersonalInfo;
-use Filament\Navigation\MenuItem;
 
 class TwoFactorCore implements Plugin
 {
     use EvaluatesClosures;
 
     protected $engine;
+
     protected $cache;
+
     protected $twoFactorRouteAction;
+
     protected $registeredMyProfileComponents = [];
+
     protected $passwordUpdateRules = ['min:8'];
+
     protected bool $passwordUpdateRequireCurrent = true;
 
     public function __construct(Google2FA $engine, ?Repository $cache = null)
@@ -189,6 +194,7 @@ class TwoFactorCore implements Plugin
     {
         $this->passwordUpdateRequireCurrent = $requiresCurrentPassword;
         $this->passwordUpdateRules = $rules;
+
         return $this;
     }
 

@@ -2,19 +2,22 @@
 
 namespace CherryAnt\FilamentTwoFactor\Livewire;
 
+use Filament\Facades\Filament;
 use Filament\Forms;
 use Filament\Forms\Form;
-use Filament\Facades\Filament;
 use Filament\Notifications\Notification;
 
 class PersonalInfo extends MyProfileComponent
 {
-    protected string $view = "filament-two-factor::livewire.personal-info";
+    protected string $view = 'filament-two-factor::livewire.personal-info';
 
     public ?array $data = [];
+
     public $user;
+
     public $userClass;
-    public array $only = ['name','email'];
+
+    public array $only = ['name', 'email'];
 
     public static $sort = 10;
 
