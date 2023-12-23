@@ -26,10 +26,13 @@ class TwoFactorCore implements Plugin
     use EvaluatesClosures;
 
     protected $engine;
+
     protected $cache;
 
     protected $myProfile;
+
     protected $twoFactorRouteAction;
+
     protected $registeredMyProfileComponents = [];
 
     public function __construct(Google2FA $engine, ?Repository $cache = null)
@@ -63,6 +66,7 @@ class TwoFactorCore implements Plugin
         if ($this->myProfile) {
             $collection->push(Pages\MyProfilePage::class);
         }
+
         return $collection->toArray();
     }
 
@@ -71,14 +75,14 @@ class TwoFactorCore implements Plugin
         if ($this->myProfile) {
             Livewire::component('two_factor_authentication', TwoFactorAuthentication::class);
             $this->myProfileComponents([
-                'two_factor_authentication' => TwoFactorAuthentication::class
+                'two_factor_authentication' => TwoFactorAuthentication::class,
             ]);
 
             if ($panel->hasTenancy()) {
                 $tenantId = request()->route()->parameter('tenant');
-                if ($tenantId && $tenant = app($panel->getTenantModel())::where($panel->getTenantSlugAttribute() ?? 'id', $tenantId)->first()){
+                if ($tenantId && $tenant = app($panel->getTenantModel())::where($panel->getTenantSlugAttribute() ?? 'id', $tenantId)->first()) {
                     $panel->userMenuItems([
-                        'account' => MenuItem::make()->url(Pages\MyProfilePage::getUrl(panel:$panel->getId(),tenant: $tenant)),
+                        'account' => MenuItem::make()->url(Pages\MyProfilePage::getUrl(panel: $panel->getId(), tenant: $tenant)),
                     ]);
                 }
             } else {
@@ -153,8 +157,10 @@ class TwoFactorCore implements Plugin
         return false;
     }
 
-    public function myProfile(bool $condition = true, string $slug = 'my-profile'){
+    public function myProfile(bool $condition = true, string $slug = 'my-profile')
+    {
         $this->myProfile = get_defined_vars();
+
         return $this;
     }
 
