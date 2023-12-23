@@ -42,10 +42,8 @@ class MyProfilePage extends Page
         return false;
     }
 
-
     public function getRegisteredMyProfileComponents(): array
     {
         return filament('filament-two-factor')->getRegisteredMyProfileComponents();
     }
-
 }
