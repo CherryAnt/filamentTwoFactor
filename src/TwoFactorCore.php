@@ -8,6 +8,7 @@ use BaconQrCode\Renderer\ImageRenderer;
 use BaconQrCode\Renderer\RendererStyle\Fill;
 use BaconQrCode\Renderer\RendererStyle\RendererStyle;
 use BaconQrCode\Writer;
+use CherryAnt\FilamentTwoFactor\Livewire\TwoFactorAuthentication;
 use CherryAnt\FilamentTwoFactor\Middleware\MustTwoFactor;
 use CherryAnt\FilamentTwoFactor\Pages\TwoFactorPage;
 use Closure;
@@ -25,21 +26,16 @@ class TwoFactorCore implements Plugin
     use EvaluatesClosures;
 
     protected $engine;
-
     protected $cache;
 
-    protected $twoFactorAuthentication;
-
-    protected $forceTwoFactorAuthentication;
-
+    protected $myProfile;
     protected $twoFactorRouteAction;
+    protected $registeredMyProfileComponents = [];
 
     public function __construct(Google2FA $engine, ?Repository $cache = null)
     {
         $this->engine = $engine;
         $this->cache = $cache;
-        $this->twoFactorAuthentication = true;
-        $this->forceTwoFactorAuthentication = true;
         $this->twoFactorRouteAction = TwoFactorPage::class;
     }
 
@@ -64,12 +60,33 @@ class TwoFactorCore implements Plugin
     protected function preparePages(): array
     {
         $collection = collect();
-
+        if ($this->myProfile) {
+            $collection->push(Pages\MyProfilePage::class);
+        }
         return $collection->toArray();
     }
 
     public function boot(Panel $panel): void
     {
+        if ($this->myProfile) {
+            Livewire::component('two_factor_authentication', TwoFactorAuthentication::class);
+            $this->myProfileComponents([
+                'two_factor_authentication' => TwoFactorAuthentication::class
+            ]);
+
+            if ($panel->hasTenancy()) {
+                $tenantId = request()->route()->parameter('tenant');
+                if ($tenantId && $tenant = app($panel->getTenantModel())::where($panel->getTenantSlugAttribute() ?? 'id', $tenantId)->first()){
+                    $panel->userMenuItems([
+                        'account' => MenuItem::make()->url(Pages\MyProfilePage::getUrl(panel:$panel->getId(),tenant: $tenant)),
+                    ]);
+                }
+            } else {
+                $panel->userMenuItems([
+                    'account' => MenuItem::make()->url(Pages\MyProfilePage::getUrl()),
+                ]);
+            }
+        }
     }
 
     public function auth()
@@ -80,11 +97,6 @@ class TwoFactorCore implements Plugin
     public function getCurrentPanel()
     {
         return Filament::getCurrentPanel();
-    }
-
-    public function shouldRegisterNavigation(string $key)
-    {
-        return $this->{$key}['shouldRegisterNavigation'];
     }
 
     public function getTwoFactorRouteAction(): string | Closure | array | null
@@ -141,8 +153,36 @@ class TwoFactorCore implements Plugin
         return false;
     }
 
-    public function shouldForceTwoFactor(): bool
+    public function myProfile(bool $condition = true, string $slug = 'my-profile'){
+        $this->myProfile = get_defined_vars();
+        return $this;
+    }
+
+    public function slug()
     {
-        return $this->forceTwoFactorAuthentication; // && !$this->auth()->user()?->hasConfirmedTwoFactor();
+        return $this->myProfile['slug'];
+    }
+
+    public function myProfileComponents(array $components)
+    {
+        $this->registeredMyProfileComponents = [
+            ...$components,
+            ...$this->registeredMyProfileComponents,
+        ];
+
+        return $this;
+    }
+
+    public function getRegisteredMyProfileComponents(): array
+    {
+        $components = collect($this->registeredMyProfileComponents)->filter(
+            fn (string $component) => $component::canView()
+        )->sortBy(
+            fn (string $component) => $component::getSort()
+        );
+
+        $components = $components->only(['two_factor_authentication']);
+
+        return $components->all();
     }
 }

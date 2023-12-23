@@ -19,23 +19,16 @@ class MustTwoFactor
             filament()->auth()->check() &&
             ! str($request->route()->getName())->contains('logout')
         ) {
-            $twofactor = filament('filament-two-factor');
-            $myProfileRouteName = 'filament.' . filament()->getCurrentPanel()->getId() . '.pages.my-profile';
-            $myProfileRouteParameters = [];
-
             if (filament()->hasTenancy()) {
                 if (! $tenantId = request()->route()->parameter('tenant')) {
                     return $next($request);
                 }
-                $myProfileRouteParameters = ['tenant' => $tenantId];
                 $twoFactorRoute = route('filament.' . filament()->getCurrentPanel()->getId() . '.auth.two-factor', ['tenant' => $tenantId, 'next' => request()->getRequestUri()]);
             } else {
                 $twoFactorRoute = route('filament.' . filament()->getCurrentPanel()->getId() . '.auth.two-factor', ['next' => request()->getRequestUri()]);
             }
 
-            if ($twofactor->shouldForceTwoFactor() && ! $request->routeIs($myProfileRouteName)) {
-                return redirect()->route($myProfileRouteName, $myProfileRouteParameters);
-            } elseif (filament()->auth()->user()->hasConfirmedTwoFactor() && ! filament()->auth()->user()->hasValidTwoFactorSession()) {
+            if (filament()->auth()->user()->hasConfirmedTwoFactor() && ! filament()->auth()->user()->hasValidTwoFactorSession()) {
                 return redirect($twoFactorRoute);
             }
         }

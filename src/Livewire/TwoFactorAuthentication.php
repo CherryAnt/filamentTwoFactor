@@ -113,9 +113,4 @@ class TwoFactorAuthentication extends MyProfileComponent
     {
         $this->showRecoveryCodes = ! $this->showRecoveryCodes;
     }
-
-    public function showRequiresTwoFactorAlert()
-    {
-        return filament('filament-two-factor')->shouldForceTwoFactor();
-    }
 }
