@@ -23,7 +23,7 @@ class FilamentTwoFactorServiceProvider extends PackageServiceProvider
             ->hasRoute('web')
             ->hasViews()
             ->hasTranslations()
-            ->hasMigration('add_two_factor_columns_to_table')
+            ->hasMigration('create_two_factor_tables')
             ->hasCommand(Install::class);
     }
 }
