@@ -1,31 +1,30 @@
 {
-    "name": ":vendor_slug/:package_slug",
-    "description": ":package_description",
+    "name": "cherryant/filamenttwofactor",
+    "description": "This is my package filamenttwofactor",
     "keywords": [
-        ":vendor_name",
+        "CherryAnt",
         "laravel",
-        ":package_slug"
+        "filamenttwofactor"
     ],
-    "homepage": "https://github.com/:vendor_slug/:package_slug",
+    "homepage": "https://github.com/cherryant/filamenttwofactor",
     "support": {
-        "issues": "https://github.com/:vendor_slug/:package_slug/issues",
-        "source": "https://github.com/:vendor_slug/:package_slug"
+        "issues": "https://github.com/cherryant/filamenttwofactor/issues",
+        "source": "https://github.com/cherryant/filamenttwofactor"
     },
     "license": "MIT",
     "authors": [
         {
-            "name": ":author_name",
-            "email": "author@domain.com",
+            "name": "Jordi Cerezo Formiga",
+            "email": "contacto@cherryant.com",
             "role": "Developer"
         }
     ],
     "require": {
         "php": "^8.1",
         "filament/filament": "^3.0",
-        "filament/forms": "^3.0",
-        "filament/tables": "^3.0",
         "spatie/laravel-package-tools": "^1.15.0",
-        "illuminate/contracts": "^10.0"
+        "bacon/bacon-qr-code": "^2.0",
+        "pragmarx/google2fa": "^7.0|^8.0"
     },
     "require-dev": {
         "laravel/pint": "^1.0",
@@ -42,13 +41,13 @@
     },
     "autoload": {
         "psr-4": {
-            "VendorName\\Skeleton\\": "src/",
-            "VendorName\\Skeleton\\Database\\Factories\\": "database/factories/"
+            "CherryAnt\\FilamentTwoFactor\\": "src/",
+            "CherryAnt\\FilamentTwoFactor\\Database\\Factories\\": "database/factories/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "VendorName\\Skeleton\\Tests\\": "tests/"
+            "CherryAnt\\FilamentTwoFactor\\Tests\\": "tests/"
         }
     },
     "scripts": {
@@ -68,10 +67,10 @@
     "extra": {
         "laravel": {
             "providers": [
-                "VendorName\\Skeleton\\SkeletonServiceProvider"
+                "CherryAnt\\FilamentTwoFactor\\FilamentTwoFactorServiceProvider"
             ],
             "aliases": {
-                "Skeleton": "VendorName\\Skeleton\\Facades\\Skeleton"
+                "FilamentTwoFactor": "CherryAnt\\FilamentTwoFactor\\Facades\\FilamentTwoFactor"
             }
         }
     },
