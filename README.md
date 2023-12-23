@@ -15,6 +15,7 @@ You can install the package via composer:
 
 ```bash
 composer require cherryant/filamenttwofactor
+php artisan twofactor:install
 ```
 
 You can publish and run the migrations with:
@@ -24,30 +25,21 @@ php artisan vendor:publish --tag="filamenttwofactor-migrations"
 php artisan migrate
 ```
 
-You can publish the config file with:
-
-```bash
-php artisan vendor:publish --tag="filamenttwofactor-config"
-```
-
-Optionally, you can publish the views using
-
-```bash
-php artisan vendor:publish --tag="filamenttwofactor-views"
-```
-
-This is the contents of the published config file:
-
-```php
-return [
-];
-```
-
 ## Usage
 
 ```php
-$filamentTwoFactor = new CherryAnt\FilamentTwoFactor();
-echo $filamentTwoFactor->echoPhrase('Hello, CherryAnt!');
+class CustomersPanelProvider extends PanelProvider
+{
+    public function panel(Panel $panel): Panel
+    {
+        return $panel
+            ...
+            ->authGuard('users')
+            ->plugin(
+                TwoFactorCore::make()
+            )
+    }
+}
 ```
 
 ## Testing
