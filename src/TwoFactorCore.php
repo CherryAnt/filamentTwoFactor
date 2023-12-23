@@ -20,6 +20,10 @@ use Illuminate\Cache\Repository;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Livewire\Livewire;
 use PragmaRX\Google2FA\Google2FA;
+use CherryAnt\FilamentTwoFactor\Livewire\UpdatePassword;
+use Illuminate\Validation\Rules\Password;
+use CherryAnt\FilamentTwoFactor\Livewire\PersonalInfo;
+use Filament\Navigation\MenuItem;
 
 class TwoFactorCore implements Plugin
 {
@@ -27,10 +31,10 @@ class TwoFactorCore implements Plugin
 
     protected $engine;
     protected $cache;
-
-    protected $myProfile;
     protected $twoFactorRouteAction;
     protected $registeredMyProfileComponents = [];
+    protected $passwordUpdateRules = ['min:8'];
+    protected bool $passwordUpdateRequireCurrent = true;
 
     public function __construct(Google2FA $engine, ?Repository $cache = null)
     {
@@ -60,32 +64,33 @@ class TwoFactorCore implements Plugin
     protected function preparePages(): array
     {
         $collection = collect();
-        if ($this->myProfile) {
-            $collection->push(Pages\MyProfilePage::class);
-        }
+        $collection->push(Pages\MyProfilePage::class);
+
         return $collection->toArray();
     }
 
     public function boot(Panel $panel): void
     {
-        if ($this->myProfile) {
-            Livewire::component('two_factor_authentication', TwoFactorAuthentication::class);
-            $this->myProfileComponents([
-                'two_factor_authentication' => TwoFactorAuthentication::class
-            ]);
+        Livewire::component('two_factor_authentication', TwoFactorAuthentication::class);
+        Livewire::component('personal_info', PersonalInfo::class);
+        Livewire::component('update_password', UpdatePassword::class);
+        $this->myProfileComponents([
+            'personal_info' => PersonalInfo::class,
+            'update_password' => UpdatePassword::class,
+            'two_factor_authentication' => TwoFactorAuthentication::class,
+        ]);
 
-            if ($panel->hasTenancy()) {
-                $tenantId = request()->route()->parameter('tenant');
-                if ($tenantId && $tenant = app($panel->getTenantModel())::where($panel->getTenantSlugAttribute() ?? 'id', $tenantId)->first()){
-                    $panel->userMenuItems([
-                        'account' => MenuItem::make()->url(Pages\MyProfilePage::getUrl(panel:$panel->getId(),tenant: $tenant)),
-                    ]);
-                }
-            } else {
+        if ($panel->hasTenancy()) {
+            $tenantId = request()->route()->parameter('tenant');
+            if ($tenantId && $tenant = app($panel->getTenantModel())::where($panel->getTenantSlugAttribute() ?? 'id', $tenantId)->first()) {
                 $panel->userMenuItems([
-                    'account' => MenuItem::make()->url(Pages\MyProfilePage::getUrl()),
+                    'account' => MenuItem::make()->url(Pages\MyProfilePage::getUrl(panel: $panel->getId(), tenant: $tenant)),
                 ]);
             }
+        } else {
+            $panel->userMenuItems([
+                'account' => MenuItem::make()->url(Pages\MyProfilePage::getUrl()),
+            ]);
         }
     }
 
@@ -153,14 +158,9 @@ class TwoFactorCore implements Plugin
         return false;
     }
 
-    public function myProfile(bool $condition = true, string $slug = 'my-profile'){
-        $this->myProfile = get_defined_vars();
-        return $this;
-    }
-
     public function slug()
     {
-        return $this->myProfile['slug'];
+        return 'profile';
     }
 
     public function myProfileComponents(array $components)
@@ -181,8 +181,24 @@ class TwoFactorCore implements Plugin
             fn (string $component) => $component::getSort()
         );
 
-        $components = $components->only(['two_factor_authentication']);
-
+        //$components = $components->only(['two_factor_authentication']);
         return $components->all();
+    }
+
+    public function passwordUpdateRules(array | Password $rules, bool $requiresCurrentPassword = true)
+    {
+        $this->passwordUpdateRequireCurrent = $requiresCurrentPassword;
+        $this->passwordUpdateRules = $rules;
+        return $this;
+    }
+
+    public function getPasswordUpdateRequiresCurrent()
+    {
+        return $this->passwordUpdateRequireCurrent;
+    }
+
+    public function getPasswordUpdateRules()
+    {
+        return $this->passwordUpdateRules;
     }
 }

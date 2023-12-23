@@ -1,4 +1,4 @@
-<x-filament-two-factor::grid-section md=2 title="{{ __('filament-two-factor::default.profile.2fa.title') }}" description="{{ __('filament-two-factor::default.profile.2fa.description') }}">
+<x-filament-two-factor::grid-section md=1 title="{{ __('filament-two-factor::default.profile.2fa.title') }}" description="{{ __('filament-two-factor::default.profile.2fa.description') }}">
 
     <x-filament::card>
 

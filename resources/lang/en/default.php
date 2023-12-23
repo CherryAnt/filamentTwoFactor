@@ -22,8 +22,8 @@ return [
     'profile' => [
         'account' => 'Account',
         'profile' => 'Profile',
-        'my_profile' => 'My Profile',
-        'subheading' => 'Manage your user profile here.',
+        'my_profile' => 'Profile',
+        'subheading' => 'Manage your user profile.',
         'personal_info' => [
             'heading' => 'Personal Information',
             'subheading' => 'Manage your personal information.',
@@ -42,7 +42,7 @@ return [
         ],
         '2fa' => [
             'title' => 'Two Factor Authentication',
-            'description' => 'Manage 2 factor authentication for your account (recommended).',
+            'description' => 'Manage two factor authentication for your account (recommended).',
             'actions' => [
                 'enable' => 'Enable',
                 'regenerate_codes' => 'Regenerate Recovery Codes',
@@ -100,7 +100,6 @@ return [
         'tooltip' => 'Copied!',
     ],
     'fields' => [
-        'avatar' => 'Avatar',
         'email' => 'Email',
         'login' => 'Login',
         'name' => 'Name',
